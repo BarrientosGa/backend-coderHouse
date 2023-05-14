@@ -3,7 +3,7 @@ import fs from 'fs'
 class ProductManager {
     constructor() {
         this.products = []
-        this.path = './files/products.json'
+        this.path = 'src/files/products.json'
     }
 
     async addProduct(title, description, price, thumbnail, code, stock) {
@@ -74,19 +74,5 @@ class ProductManager {
     }
 }
 
-const manejadorDeProductos = new ProductManager()
+export default ProductManager;
 
-const test = async() => {
-    const primeraConsulta = await manejadorDeProductos.getProducts()
-    console.log(primeraConsulta);
-    /* const segundaConsulta = await manejadorDeProductos.addProduct('producto prueba' ,'Este es un producto prueba', 200 , 'Sin imagen' , 'abc123', 25)
-    console.log(segundaConsulta);
-    const tercerConsulta = await manejadorDeProductos.getProductById(1)
-    console.log(tercerConsulta);
-    const cuartaConsulta = await manejadorDeProductos.updateProduct(1 , {title: 'titulo de prueba'})
-    console.log(cuartaConsulta);
-    const quintaConsulta = await manejadorDeProductos.deleteProduct(1)
-    console.log(quintaConsulta); */
-}
-
-test()
