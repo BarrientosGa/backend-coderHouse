@@ -1,0 +1,32 @@
+[
+	{
+		"products": [
+			{
+				"title": "Titulo para el carrito",
+				"description": "descripcion para el carrito",
+				"code": "code4523",
+				"price": 1000,
+				"status": true,
+				"category": "categoria para el carrito"
+			},
+			{
+				"product": "21683bdf-fd81-43ff-8eb1-0eb4872c60f9",
+				"quantity": 3
+			}
+		],
+		"id": "48079d80-c83e-49e4-91c3-71e0a06ee8a6"
+	},
+	{
+		"products": [
+			{
+				"title": "Titulo para el carrito",
+				"description": "descripcion para el carrito",
+				"code": "code4529",
+				"price": 1000,
+				"status": true,
+				"category": "categoria para el carrito"
+			}
+		],
+		"id": "cd145df2-e4f5-4d5c-9408-e78bb22c9bf2"
+	}
+]
