@@ -61,7 +61,7 @@ router.post('/:cid/product/:pid' , async(req,res)=>{
                 })
             })
             await fs.writeFile('src/files/carts.json' , JSON.stringify(cartPersistent , null , '\t'))
-            res.send()
+            res.send({message: 'prueba'})
         }
     }
     else{
