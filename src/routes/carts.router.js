@@ -46,8 +46,13 @@ router.post('/:cid/product/:pid' , async(req,res)=>{
     if(findCartById){
         if(productRepeat === -1){
             quantityProduct.quantity ++
-            findCartById.products.push(quantityProduct)
-            cartPersistent.push(findCartById)
+            cartPersistent.map(cart => {
+                if(cart.id === cid){
+                    cart.products.push(quantityProduct)
+                }
+                return cart
+            })
+            
             await fs.writeFile('src/files/carts.json' , JSON.stringify(cartPersistent , null , '\t'))
             res.send({message: 'se agrego producto al carrito seleccionado'})
         }
@@ -61,7 +66,7 @@ router.post('/:cid/product/:pid' , async(req,res)=>{
                 })
             })
             await fs.writeFile('src/files/carts.json' , JSON.stringify(cartPersistent , null , '\t'))
-            res.send({message: 'prueba'})
+            res.send()
         }
     }
     else{
