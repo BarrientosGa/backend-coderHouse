@@ -1,6 +1,6 @@
 [
 	{
-		"title": "Titulo nuevo desde postman",
+		"title": "producto 1",
 		"description": "Descripcion nueva desde postman",
 		"code": "code9051",
 		"price": 10,
@@ -10,9 +10,9 @@
 		"id": "21683bdf-fd81-43ff-8eb1-0eb4872c60f9"
 	},
 	{
-		"title": "Titulo actualizado desde postman",
+		"title": "producto 2",
 		"description": "Descripcion actualizada desde postman",
-		"code": "code9051",
+		"code": "code9052",
 		"price": 10,
 		"status": true,
 		"stock": 100,
