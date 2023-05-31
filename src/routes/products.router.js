@@ -19,6 +19,7 @@ router.get('/' , async(req,res)=>{
     }
 })
 
+
 router.get('/:pid' , async(req,res)=>{
     const {pid} = req.params
     const dataInFile = await fs.readFile(manejadorDeProductos.path , 'utf-8')
@@ -88,5 +89,7 @@ router.delete('/:pid' , async(req,res) =>{
     await fs.writeFile(manejadorDeProductos.path , JSON.stringify(productDeletedById , null , '\t'))
     res.status(202).send({message:'Producto eliminado con exito'})
 })
+
+
 
 export default router
