@@ -8,8 +8,6 @@ import mongoose from 'mongoose';
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-/* const connection = mongoose.connect('mongodb+srv://barrientosga22:40916271Gaby@cluster0.csihdak.mongodb.net/?retryWrites=true&w=majority') */
-
 app.use('/api/products/' , routerProducts)
 app.use('/api/carts/' , routerCarts)
 app.use('/realtimeproducts' , routerWebSockets)
@@ -17,4 +15,12 @@ app.use('/realtimeproducts' , routerWebSockets)
 
 app.listen(8080 , () => {
     console.log('Conectado al puerto 8080');
+})
+
+
+mongoose.connect(`${process.env.DB_CONNECTION}` , (error) => {
+    if(error){
+        console.log('Cannot connect to database:' + error);
+        process.exit()
+    }
 })
