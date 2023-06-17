@@ -2,41 +2,34 @@ import { Router } from "express";
 import fs from 'fs/promises'
 import ProductManager from "../ProductManager.js";
 import { v4 as uuidv4 } from 'uuid';
+import {productModel} from '../dao/models/product.model.js'
 
 const router = Router()
 const manejadorDeProductos = new ProductManager();
 
 router.get('/' , async(req,res)=>{
     const {limit} =req.query
-    const dataInFile = await fs.readFile(manejadorDeProductos.path , 'utf-8')
-    const product = JSON.parse(dataInFile)
-    if(limit){
-       const newArrayProductForLimit = product.slice(0 , limit)
-       res.send({newArrayProductForLimit})
-    }
-    else{
-        res.send({product});
+    try {
+        const products = await productModel.find().limit(limit)
+        res.send({products})
+    } catch (error) {
+       res.send({message : 'Hubo un error en el servidor'}) 
     }
 })
 
 
 router.get('/:pid' , async(req,res)=>{
     const {pid} = req.params
-    const dataInFile = await fs.readFile(manejadorDeProductos.path , 'utf-8')
-    const product = JSON.parse(dataInFile)
-    const productById = await product.find(product => product.id === Number(pid))
-    if(productById){
-        res.send(productById)
-    }
-    else{
+    try {
+        const product = await productModel.findOne({_id:pid})
+        res.send(product)
+    } catch (error) {
         res.send({message : 'El producto no existe'})
     }
 })
 
 router.post('/' , async(req , res) => {
     const {title , description, code, price , status=true , stock, category , thumbnails} = req.body
-    const dataInFile = await fs.readFile(manejadorDeProductos.path , 'utf-8')
-    const productPersistent = JSON.parse(dataInFile)
     const product = {
         title,
         description,
@@ -46,48 +39,41 @@ router.post('/' , async(req , res) => {
         stock,
         category
     }
-    const findFieldUndefined = Object.values(product).findIndex(value => value === undefined || null) //retorna -1 cuando no encuentra ni undefined | null
-    const findProductWithCodeEqual = productPersistent.findIndex(product => product.code === code) //retorna -1 cuando no encontra ningun code igual
 
-    if(findFieldUndefined === -1 && findProductWithCodeEqual === -1){
+    //if(findFieldUndefined === -1 && findProductWithCodeEqual === -1){
         product.thumbnails = thumbnails
-        product.id = uuidv4() //genera un id dinamico
-        productPersistent.push(product) //al archivo persistente se le pushea el nuevo product
-        await fs.writeFile(manejadorDeProductos.path , JSON.stringify(productPersistent , null , '\t'))
+        await productModel.create(product)
         res.send({message: 'Se agrego producto con exito'})
-    }
-    else {
-        res.status(400).send({message: 'No paso las validaciones'})
-    }
+    //}
+    //else {
+        //res.status(400).send({message: 'No paso las validaciones'})
+    //}
 })
 
 router.put('/:pid' , async(req,res)=>{
     const {pid} = req.params
     const fieldUpdate = req.body
-    const dataInFile = await fs.readFile(manejadorDeProductos.path , 'utf-8')
-    const dataParsed = JSON.parse(dataInFile)
-    const productById = dataParsed.find(product => product.id === pid)
 
-    if(productById){
-        const productUpdate = {...productById , ...fieldUpdate}
-        const productFiltered = dataParsed.filter(product => product.id !== pid)
-        productFiltered.push(productUpdate)
-        await fs.writeFile(manejadorDeProductos.path , JSON.stringify(productFiltered , null , '\t'))
+    try {
+        await productModel.updateOne({_id:pid} , fieldUpdate)
         res.status(201).send({message:'Producto actualizado con exito'})
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({message:'Hubo un error interno en el servidor'})
     }
-    else{
-        res.status(400).send({message:'No existe producto con ese id'})
-    }
+
 })
 
 router.delete('/:pid' , async(req,res) =>{
     const {pid} = req.params
-    const dataInFile = await fs.readFile(manejadorDeProductos.path , 'utf-8')
-    const dataParsed = JSON.parse(dataInFile)
-    const productDeletedById = dataParsed.filter(product => product.id !== pid)
+    try {
+        await productModel.deleteOne({_id : pid})
+        res.status(202).send({message:'Producto eliminado con exito'})
 
-    await fs.writeFile(manejadorDeProductos.path , JSON.stringify(productDeletedById , null , '\t'))
-    res.status(202).send({message:'Producto eliminado con exito'})
+    } catch (error) {        
+        res.send({message: 'No existe producto con ese id'})
+    }
+    
 })
 
 

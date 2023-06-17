@@ -18,9 +18,4 @@ app.listen(8080 , () => {
 })
 
 
-mongoose.connect(`${process.env.DB_CONNECTION}` , (error) => {
-    if(error){
-        console.log('Cannot connect to database:' + error);
-        process.exit()
-    }
-})
+mongoose.connect('mongodb+srv://barrientosga22:40916271Gaby@cluster0.csihdak.mongodb.net/ecommerce?retryWrites=true&w=majority')
