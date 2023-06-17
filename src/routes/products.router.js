@@ -1,11 +1,7 @@
 import { Router } from "express";
-import fs from 'fs/promises'
-import ProductManager from "../ProductManager.js";
-import { v4 as uuidv4 } from 'uuid';
 import {productModel} from '../dao/models/product.model.js'
 
 const router = Router()
-const manejadorDeProductos = new ProductManager();
 
 router.get('/' , async(req,res)=>{
     const {limit} =req.query
@@ -20,11 +16,17 @@ router.get('/' , async(req,res)=>{
 
 router.get('/:pid' , async(req,res)=>{
     const {pid} = req.params
+    
     try {
         const product = await productModel.findOne({_id:pid})
-        res.send(product)
+            if(product){
+                return res.send(product)
+            }
+            else{
+                return res.send({message : 'El id no existe'})
+            }
     } catch (error) {
-        res.send({message : 'El producto no existe'})
+        res.status(400).send({ status: 'Rejected', payload: error.message });
     }
 })
 
@@ -40,14 +42,21 @@ router.post('/' , async(req , res) => {
         category
     }
 
-    //if(findFieldUndefined === -1 && findProductWithCodeEqual === -1){
-        product.thumbnails = thumbnails
-        await productModel.create(product)
-        res.send({message: 'Se agrego producto con exito'})
-    //}
-    //else {
-        //res.status(400).send({message: 'No paso las validaciones'})
-    //}
+    const findFieldUndefined = Object.values(product).findIndex(value => value === undefined || null) //retorna -1 cuando no encuentra ni undefined | null
+
+    try {
+        const productRepeat = await productModel.findOne({code:code})
+        if(findFieldUndefined === -1 && !productRepeat){
+            product.thumbnails = thumbnails
+            await productModel.create(product)
+            return res.send({message: 'Se agrego producto con exito'})
+        }
+        else{
+            return res.status(400).send({message: 'No paso las validaciones'})
+        }
+    } catch (error) {
+        res.status(400).send({ status: 'Rejected', payload: error.message });
+    }
 })
 
 router.put('/:pid' , async(req,res)=>{
@@ -55,11 +64,17 @@ router.put('/:pid' , async(req,res)=>{
     const fieldUpdate = req.body
 
     try {
-        await productModel.updateOne({_id:pid} , fieldUpdate)
-        res.status(201).send({message:'Producto actualizado con exito'})
+        const product = await productModel.findOne({_id:pid})
+        if(product){
+            await productModel.updateOne({_id:pid} , fieldUpdate)
+            return res.status(201).send({message:'Producto actualizado con exito'})
+        }
+        else{
+            return res.send({message : 'El id no existe'})
+        }
     } catch (error) {
         console.log(error);
-        res.status(500).send({message:'Hubo un error interno en el servidor'})
+        res.status(400).send({ status: 'Rejected', payload: error.message });
     }
 
 })
@@ -67,11 +82,15 @@ router.put('/:pid' , async(req,res)=>{
 router.delete('/:pid' , async(req,res) =>{
     const {pid} = req.params
     try {
-        await productModel.deleteOne({_id : pid})
-        res.status(202).send({message:'Producto eliminado con exito'})
-
+        const product = await productModel.findOne({_id:pid})
+        if (product) {
+            await productModel.deleteOne({_id : pid})
+            return res.status(202).send({message:'Producto eliminado con exito'})  
+        } else {
+            return res.send({message : 'El id no existe'})
+        }
     } catch (error) {        
-        res.send({message: 'No existe producto con ese id'})
+        res.status(400).send({ status: 'Rejected', payload: error.message });
     }
     
 })
