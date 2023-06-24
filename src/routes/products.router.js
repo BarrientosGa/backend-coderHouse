@@ -4,20 +4,24 @@ import {productModel} from '../dao/models/product.model.js'
 const router = Router()
 
 router.get('/' , async(req,res)=>{
-    const {limit , page , sort , query} =req.query
+    const {limit , page , sort , filtro , filtroVal} =req.query
     const limitCustom = limit ?? 10
     const pageCustom = page ?? 1
-    const sortCustom = sort ?? ''
+    const sortCustom = sort ?? 0
+    const filtroCustom = filtro
+    const filtroValCustom = filtroVal
     try {
-        if(query){
-            const products = await productModel.paginate({price : query} , {limit : limitCustom , page:pageCustom , sort:{price : sortCustom}  })
+        //[filtroCustom] va ser reemplazado por categoria o disponibilidad
+        if(filtro && filtroValCustom){
+            const products = await productModel.paginate({[filtroCustom] : filtroValCustom} , {limit : limitCustom , page:pageCustom , sort:{price : sortCustom}  })
             res.send({status:'success' , payload: products})
         }
-        else {
+        else{
             const products = await productModel.paginate({} , {limit : limitCustom , page:pageCustom , sort:{price : sortCustom}  })
             res.send({status:'success' , payload: products})
         }
-        
+       
+
     } catch (error) {
        res.status(400).send({message : 'Hubo un error en el servidor'}) 
     }
