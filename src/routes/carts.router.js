@@ -23,7 +23,7 @@ router.get('/:cid' , async(req,res)=>{
     const {cid} = req.params
    
     try {
-        const cart = await cartModel.findOne({_id : cid}).populate()
+        const cart = await cartModel.findOne({_id : cid}).populate('products.product')
         if (cart) {
             return res.send(cart)
         } else {

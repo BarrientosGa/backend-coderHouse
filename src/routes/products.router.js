@@ -27,6 +27,18 @@ router.get('/' , async(req,res)=>{
     }
 })
 
+router.get('/products' , async (req,res) => {
+     let page = parseInt(req.query.page)
+     if(!page) page=1
+      //Lean es crucial para mostrar en Handlebars, ya que evita la "hidratación" del documento de mongoose,
+     //esto hace que a Handlebars llegue el documento como plain object y no como Document.
+     const products = await productModel.paginate({} , {page , limit:2 , lean:true})
+     products.prevLink = products.hasPrevPage ? `http://localhost:8080/api/products/products?page=${products.prevPage}` : ''
+     products.nextLink = products.hasNextPage? `http://localhost:8080/api/products/products?page=${products.nextPage}`: ''
+     products.isValid= !(page<=0||page>products.totalPages)
+     res.render('products',products)
+ })
+
 
 router.get('/:pid' , async(req,res)=>{
     const {pid} = req.params

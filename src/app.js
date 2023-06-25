@@ -4,8 +4,12 @@ import routerCarts from'./routes/carts.router.js';
 import routerWebSockets from './routes/webSockets.router.js'
 import __dirname from './utils.js'
 import mongoose from 'mongoose';
+import handlebars from 'express-handlebars';
 
 const app = express()
+app.engine('handlebars',handlebars.engine());
+app.set('views',__dirname+'/views')
+app.set('view engine','handlebars');
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use('/api/products/' , routerProducts)
