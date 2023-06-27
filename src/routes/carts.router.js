@@ -19,6 +19,13 @@ router.post('/' , async(req,res)=>{
    
 })
 
+router.get('/carts/:cid' , async(req ,res) => {
+    const {cid} = req.params
+    const cart = await cartModel.findOne({_id : cid}).populate('products.product').lean()
+    console.log(cart);
+    res.render('cart', cart)
+})
+
 router.get('/:cid' , async(req,res)=>{
     const {cid} = req.params
    
