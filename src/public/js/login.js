@@ -18,6 +18,9 @@ form.addEventListener('submit',e=>{
         if(result.status===200){
             window.location.replace('/api/products/products');
         }
+    }).catch(error =>{
+        console.log(error);
+        window.location.replace('/login');
     })
 })
 

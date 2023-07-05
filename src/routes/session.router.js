@@ -26,7 +26,7 @@ router.post('/register' , async(req , res) => {
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await userModel.findOne({ email: email, password: password });
-    if (!user) return res.redirect('/login')
+    if (!user) return res.status(401).send('error')
     if(email === 'adminCoder@coder.com' && password === 'adminCod3r123'){
       return req.session.user = {
         name: user.first_name + user.last_name,
