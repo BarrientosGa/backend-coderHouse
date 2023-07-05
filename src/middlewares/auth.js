@@ -5,7 +5,7 @@
     if(req.session.user){
         return next()
     }
-    return res.send('error de autorizacion')
+    return res.status(401).send('error de autorizacion')
 }
 
 export default auth
