@@ -1,7 +1,12 @@
-{{#if isValid}}
+{{#if product.isValid}}
 <div>
 
-    {{#each docs}}
+    <h1>Bienvenido {{user.name}}</h1>
+    <h2>Tu rol es {{user.rol}}</h2>
+
+    <button id="logout">Cerrar sesion</button>
+
+    {{#each product.docs}}
 
     <div>
         <p>Nombre del producto : {{this.title}}</p>
@@ -35,3 +40,5 @@
 {{else}}
 <h1>No hay productos</h1>
 {{/if}}
+
+<script src="/js/logout.js"></script>

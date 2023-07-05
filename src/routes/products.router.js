@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {productModel} from '../dao/models/product.model.js'
+import auth from "../middlewares/auth.js";
 
 const router = Router()
 
@@ -27,7 +28,7 @@ router.get('/' , async(req,res)=>{
     }
 })
 
-router.get('/products' , async (req,res) => {
+router.get('/products' , auth , async (req,res) => {
      let page = parseInt(req.query.page)
      if(!page) page=1
       //Lean es crucial para mostrar en Handlebars, ya que evita la "hidratación" del documento de mongoose,
@@ -36,7 +37,10 @@ router.get('/products' , async (req,res) => {
      products.prevLink = products.hasPrevPage ? `http://localhost:8080/api/products/products?page=${products.prevPage}` : ''
      products.nextLink = products.hasNextPage? `http://localhost:8080/api/products/products?page=${products.nextPage}`: ''
      products.isValid= !(page<=0||page>products.totalPages)
-     res.render('products',products)
+     res.render('products', {
+        product : products,
+        user: req.session.user
+     })
  })
 
 
