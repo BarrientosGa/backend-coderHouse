@@ -1,5 +1,4 @@
 import { Router } from "express";
-import userModel from "../dao/models/user.model.js";
 import passport from "passport";
 
 const router = Router()
@@ -27,6 +26,13 @@ router.get('/logout' , (req ,res) => {
     }
     res.send('Logout ok')
   })
+})
+
+router.get('/github' , passport.authenticate('github' , {scope:['user:email']}), (req ,res) => {})
+
+router.get('/githubcallback' , passport.authenticate('github' , {failureRedirect:'/login'}), (req ,res) => {
+  req.session.user = req.user
+  res.redirect('/api/products/products')
 })
 
 

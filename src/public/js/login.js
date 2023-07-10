@@ -7,7 +7,6 @@ form.addEventListener('submit',e=>{
     const data = new FormData(form);
     const obj = {};
     data.forEach((value,key)=>obj[key]=value);
-    console.log(obj);
     fetch('/api/sessions/login',{
         method:'POST',
         body:JSON.stringify(obj),
@@ -15,12 +14,9 @@ form.addEventListener('submit',e=>{
             'Content-Type':'application/json'
         }
     }).then(result=>{
-        if(result.status===200){
-            window.location.replace('/api/products/products');
-        }
+       console.log(result);
     }).catch(error =>{
         console.log(error);
-        window.location.replace('/login');
     })
 })
 

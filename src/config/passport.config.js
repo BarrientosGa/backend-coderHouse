@@ -1,7 +1,8 @@
 import passport from "passport";
 import local from 'passport-local'
-import userModel from "../dao/models/user.model";
-import {createHash , isValidPasswors} from '../utils.js'
+import userModel from "../dao/models/user.model.js";
+import {createHash , isValidPassword} from '../utils.js'
+import GitHubStrategy from 'passport-github2'
 
 const LocalStrategy = local.Strategy
 const initializePassport = () => {
@@ -17,14 +18,14 @@ const initializePassport = () => {
                     */
                     return done(null, false)
                 }
-                const newUSer = {
+                const newUser = {
                     first_name,
                     last_name,
                     email,
                     age,
-                    passport: createHash(password)
+                    password: createHash(password)
                 }
-                let result = await userModel.create(newUSer)
+                await userModel.create(newUser)
             } catch (error) {
                 //cuando hay un error, entonces se manda done con el error indicado
                 return done('error al obtener el usuario' + error)
@@ -37,12 +38,39 @@ const initializePassport = () => {
             if(!user){
                 return done(null,false)
             }
-            if(!isValidPasswors(user , password)) return done (null , false)
+            if(!isValidPassword(user , password)) return done (null , false)
             return done(null , user)
         } catch (error) {
             return done(error)
         }
-    }))
+    })),
+    passport.use('github' , new GitHubStrategy({
+        clientID: 'Iv1.c32e9428c1896b9f',
+        clientSecret: 'a87e267528089c7b1b0087201d9b0a3b5d3f4ad3',
+        callbackURL : 'http://localhost:8080/api/sessions/githubcallback'
+    }, async (accessToken, refreshToken,profile , done) => {
+        try {
+            console.log(profile);
+            let user = await userModel.findOne({email : profile._json.email})
+            if(!user){
+                let newUser = {
+                    first_name : profile._json.name,
+                    last_name : '',
+                    email : profile._json.email,
+                    age : 30,
+                    password: ''
+                }
+                let result = await userModel.create(newUser)
+                done(null , result)
+            }
+            else {//si entra aca es porque el usuario ya existia
+                done(null , user)
+            }
+        } catch (error) {
+            return done(error)
+        }
+    }
+    ))
 }
 
 passport.serializeUser((user , done) => {
