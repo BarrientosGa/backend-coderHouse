@@ -28,7 +28,7 @@ router.get('/' , async(req,res)=>{
     }
 })
 
-router.get('/products' , auth , async (req,res) => {
+router.get('/products' ,  auth, async (req,res) => {
      let page = parseInt(req.query.page)
      if(!page) page=1
       //Lean es crucial para mostrar en Handlebars, ya que evita la "hidratación" del documento de mongoose,

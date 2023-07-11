@@ -8,7 +8,8 @@ router.post('/register' , passport.authenticate('register' , {failureRedirect:'/
    res.send({status:'success' , message:'User register'})
 })
 
-router.post("/login", passport.authenticate('login' , {failureRedirect:'/login'}) ,  async (req, res) => {
+router.post("/login", passport.authenticate('login') ,  async (req, res) => {
+
     if(!req.user) return res.status(400).send({status:'error' , error:'Invalid credentials'})
     req.session.user = {
       first_name : req.user.first_name,

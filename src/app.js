@@ -37,7 +37,7 @@ app.set('view engine','handlebars');
 app.use('/', viewsRoutes)
 app.use('/api/products/', routerProducts)
 app.use('/api/carts/' , routerCarts)
-app.use('/api/sessions/' , routerSession)
+app.use('/api/sessions' , routerSession)
 app.use('/realtimeproducts' , routerWebSockets)
 
 
