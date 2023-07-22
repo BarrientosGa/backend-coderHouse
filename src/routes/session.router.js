@@ -1,32 +1,26 @@
 import { Router } from "express";
 import passport from "passport";
+import jwt from 'jsonwebtoken'
 
 const router = Router()
 
+/* el session en false es porque estamos usando jwt al usar esto tampoco usamos las funciones de serializar y deserializar */
 
-router.post('/register' , passport.authenticate('register' , {failureRedirect:'/register'}) , async(req , res) => {
+
+router.post('/register' , passport.authenticate('register' , {session:false}) , async(req , res) => {
    res.send({status:'success' , message:'User register'})
 })
 
-router.post("/login", passport.authenticate('login') ,  async (req, res) => {
+router.post("/login", passport.authenticate('login' , {session:false}) ,  async (req, res) => {
+  let token = jwt.sign({email: req.body.email} , 'coderSecret' , {expiresIn:'24h'})
+  res.cookie('coderCookie' , token , {httpOnly:true}).send({ status: "success" });
+});
 
-    if(!req.user) return res.status(400).send({status:'error' , error:'Invalid credentials'})
-    req.session.user = {
-      first_name : req.user.first_name,
-      last_name : req.user.last_name,
-      age:req.user.age,
-      email: req.user.email
-    }
-    res.send({status:'success' , payload : req.user})
+router.post('/logout' , (req ,res , next) => {
+  req.logout(()=>{
+    if (err) { return next(err); }
+    res.redirect("/login");
   });
-
-router.get('/logout' , (req ,res) => {
-  req.session.destroy(err => {
-    if(err){
-      return res.status(400).send({status : 'Logout error' , body:err})
-    }
-    res.send('Logout ok')
-  })
 })
 
 router.get('/github' , passport.authenticate('github' , {scope:['user:email']}), (req ,res) => {})

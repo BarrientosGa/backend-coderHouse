@@ -25,7 +25,8 @@ const initializePassport = () => {
                     age,
                     password: createHash(password)
                 }
-                await userModel.create(newUser)
+                const result = await userModel.create(newUser)
+                return done(null , result)
             } catch (error) {
                 //cuando hay un error, entonces se manda done con el error indicado
                 return done('error al obtener el usuario' + error)
@@ -72,14 +73,5 @@ const initializePassport = () => {
     }
     ))
 }
-
-passport.serializeUser((user , done) => {
-    done(null , user.id)
-})
-
-passport.deserializeUser(async(id , done) => {
-    let user = await userModel.findById(id)
-    done(null , user)
-})
 
 export default initializePassport

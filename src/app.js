@@ -10,7 +10,10 @@ import session from 'express-session';
 import routerSession from './routes/session.router.js'
 import viewsRoutes from './routes/views.routes.js'
 import passport from 'passport';
+import cookieParser from "cookie-parser";
+import { initializePassportJWT } from "./config/jwt.passport.js";
 import initializePassport from './config/passport.config.js';
+
 
 const app = express()
 app.use(express.json())
@@ -18,7 +21,12 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.static(__dirname+'/public'))
 app.engine('handlebars',handlebars.engine());
 app.set('views',__dirname+'/views')
-app.use(
+app.use(cookieParser())
+initializePassportJWT()
+initializePassport()
+
+
+/* app.use(
   session({
     store: new MongoStore({
       mongoUrl:
@@ -28,11 +36,11 @@ app.use(
     resave: true, //se mantiene la session en caso de que la sesion se mantenga inactiva. si es false deja de existir al pasar un tiempo
     saveUninitialized: false, //al estar en false si el objeto session llega vacio no se va guardar
   })
-);
+); */
 
-initializePassport()
+/* initializePassport()
 app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.session()) */
 app.set('view engine','handlebars');
 app.use('/', viewsRoutes)
 app.use('/api/products/', routerProducts)
