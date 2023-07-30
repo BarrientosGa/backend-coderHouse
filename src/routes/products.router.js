@@ -1,7 +1,6 @@
 import { Router } from "express";
-import {productModel} from '../dao/models/product.model.js'
-import auth from "../middlewares/auth.js";
 import passport from "passport";
+import { productModel } from "../persistence/models/product.model.js";
 
 const router = Router()
 
