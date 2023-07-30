@@ -1,28 +1,16 @@
 import { Router } from "express";
 import passport from "passport";
 import { productModel } from "../persistence/models/product.model.js";
+import {getProducts , getProductById, createProduct , updateProductById , deleteProductById} from '../services/products.service.js'
 
 const router = Router()
 
 router.get('/' , async(req,res)=>{
     const {limit , page , sort , filtro , filtroVal} =req.query
-    const limitCustom = limit ?? 10
-    const pageCustom = page ?? 1
-    const sortCustom = sort ?? 0
-    const filtroCustom = filtro
-    const filtroValCustom = filtroVal
+   
     try {
-        //[filtroCustom] va ser reemplazado por categoria o disponibilidad
-        if(filtro && filtroValCustom){
-            const products = await productModel.paginate({[filtroCustom] : filtroValCustom} , {limit : limitCustom , page:pageCustom , sort:{price : sortCustom}  })
-            res.send({status:'success' , payload: products})
-        }
-        else{
-            const products = await productModel.paginate({} , {limit : limitCustom , page:pageCustom , sort:{price : sortCustom}  })
-            res.send({status:'success' , payload: products})
-        }
-       
-
+       const products = await getProducts(limit,page,sort,filtro,filtroVal)
+       res.send({products})
     } catch (error) {
        res.status(400).send({message : 'Hubo un error en el servidor'}) 
     }
@@ -48,13 +36,8 @@ router.get('/:pid' , async(req,res)=>{
     const {pid} = req.params
     
     try {
-        const product = await productModel.findOne({_id:pid})
-            if(product){
-                return res.send(product)
-            }
-            else{
-                return res.send({message : 'El id no existe'})
-            }
+        const product = await getProductById(pid)
+        res.send({product})
     } catch (error) {
         res.status(400).send({ status: 'Rejected', payload: error.message });
     }
@@ -72,18 +55,16 @@ router.post('/' , async(req , res) => {
         category
     }
 
-    const findFieldUndefined = Object.values(product).findIndex(value => value === undefined || null) //retorna -1 cuando no encuentra ni undefined | null
-
     try {
-        const productRepeat = await productModel.findOne({code:code})
-        if(findFieldUndefined === -1 && !productRepeat){
-            product.thumbnails = thumbnails
-            await productModel.create(product)
-            return res.send({message: 'Se agrego producto con exito'})
+        const productCreated = await createProduct(product)
+        if(productCreated){
+            await createProduct(product)
+            res.send({message:'Se agrego correctame el producto'})
         }
         else{
-            return res.status(400).send({message: 'No paso las validaciones'})
+            res.status(400).send({message:'Todos los campos son obligatorios'})
         }
+
     } catch (error) {
         res.status(400).send({ status: 'Rejected', payload: error.message });
     }
@@ -94,14 +75,8 @@ router.put('/:pid' , async(req,res)=>{
     const fieldUpdate = req.body
 
     try {
-        const product = await productModel.findOne({_id:pid})
-        if(product){
-            await productModel.updateOne({_id:pid} , fieldUpdate)
-            return res.status(201).send({message:'Producto actualizado con exito'})
-        }
-        else{
-            return res.send({message : 'El id no existe'})
-        }
+        await updateProductById(pid,fieldUpdate)
+        return res.status(201).send({message:'Producto actualizado con exito'})
     } catch (error) {
         console.log(error);
         res.status(400).send({ status: 'Rejected', payload: error.message });
@@ -112,13 +87,9 @@ router.put('/:pid' , async(req,res)=>{
 router.delete('/:pid' , async(req,res) =>{
     const {pid} = req.params
     try {
-        const product = await productModel.findOne({_id:pid})
-        if (product) {
-            await productModel.deleteOne({_id : pid})
-            return res.status(202).send({message:'Producto eliminado con exito'})  
-        } else {
-            return res.send({message : 'El id no existe'})
-        }
+       await deleteProductById(pid)
+       return res.status(201).send({message:'Producto eliminado con exito'})
+       
     } catch (error) {        
         res.status(400).send({ status: 'Rejected', payload: error.message });
     }
