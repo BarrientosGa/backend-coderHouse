@@ -2,6 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 import { productModel } from "../persistence/models/product.model.js";
 import {getProducts , getProductById, createProduct , updateProductById , deleteProductById} from '../services/products.service.js'
+import { validationType } from "../controllers/products.controller.js";
 
 const router = Router()
 
@@ -43,7 +44,7 @@ router.get('/:pid' , async(req,res)=>{
     }
 })
 
-router.post('/' , async(req , res) => {
+router.post('/' , validationType , async(req , res) => {
     const {title , description, code, price , status=true , stock, category , thumbnails} = req.body
     const product = {
         title,
