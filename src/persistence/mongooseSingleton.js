@@ -4,7 +4,7 @@ export default class MongoSingleton {
     static #instance
     
     constructor(){
-        mongoose.connect(process.env.DB_CONNECTION) , {
+        mongoose.connect('mongodb+srv://barrientosga22:40916271Gaby@cluster0.csihdak.mongodb.net/?retryWrites=true&w=majority') , {
             useNewUrlParser : true,
             useUnifiedTopology : true
         }

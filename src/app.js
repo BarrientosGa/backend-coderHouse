@@ -38,4 +38,4 @@ app.listen(8080 , () => {
 })
 
 //connection db
-new MongoSingleton()
+MongoSingleton.getInstance()
