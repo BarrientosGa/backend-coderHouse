@@ -1,17 +1,19 @@
 import { Router } from "express";
-import { cartModel } from "../persistence/models/cart.model.js";
-import {productModel} from '../persistence/models/product.model.js'
+import { addProductInCart, addProductInCartById, deleteProductInCartById, deleteProductsInCartById, getCartById, getCartsById, updateStockProductInCartById , updateCartWithArrayProducts } from "../services/carts.service.js";
+import { validationType } from "../controllers/products.controller.js";
+import { validationNumber } from "../controllers/carts.controller.js";
 
 const router = Router()
 
-router.post('/' , async(req,res)=>{
+//crea un nuevo carrito con productos
+router.post('/' , validationType , async(req,res)=>{
     const {products} = req.body
     const cart = {
         products
     }
 
     try {
-        await cartModel.create(cart)
+        await addProductInCart(cart)
         res.send({message: 'Se agrego el carrito correctamente'})
     } catch (error) {
         res.status(400).send({ status: 'Rejected', payload: error.message });
@@ -19,9 +21,10 @@ router.post('/' , async(req,res)=>{
    
 })
 
+//renderiza los productos de dicho carrito
 router.get('/carts/:cid' , async(req ,res) => {
     const {cid} = req.params
-    const cart = await cartModel.findOne({_id : cid}).populate('products.product').lean()
+    const cart = await getCartsById(cid)
     res.render('cart', cart)
 })
 
@@ -29,12 +32,8 @@ router.get('/:cid' , async(req,res)=>{
     const {cid} = req.params
    
     try {
-        const cart = await cartModel.findOne({_id : cid}).populate('products.product')
-        if (cart) {
-            return res.send(cart)
-        } else {
-            return res.send({message : 'El id no existe'})
-        }
+        const cart = await getCartById(cid)
+        res.send(cart)
     } catch (error) {
         res.status(400).send({ status: 'Rejected', payload: error.message });
     }
@@ -44,72 +43,54 @@ router.get('/:cid' , async(req,res)=>{
 router.post('/:cid/product/:pid' , async(req,res)=>{
     const {cid , pid} = req.params
     try {
-        const product = await productModel.findOne({_id : pid})
-        const cart = await cartModel.findOne({_id: cid})
-        cart.products.push({product: product})
-        cart.save()
+        await addProductInCartById(cid , pid)
         res.send({message : 'Se agrego producto correctamente a carrito'})
     } catch (error) {
-        console.log(error);
+        res.status(400).send({ status: 'Rejected', payload: error.message });
     }   
     
 })
 
 router.delete('/:cid/products/:pid' , async(req,res) => {
-    //Debera eliminar del carrito id el producto seleccionado
     const {cid , pid} = req.params
     try {
-        const cart = await cartModel.findOne({_id: cid})
-        //elimino un producto del carrito con el pull
-        cart.products.pull(pid)
-        await cart.save()
+        await deleteProductInCartById(cid , pid)
         res.send({message:'Se elimino correctamente'})
     } catch (error) {
-        console.log(error);   
+        res.status(400).send({ status: 'Rejected', payload: error.message });
     }
 })
 
 router.put('/:cid' , async(req,res) => {
-    //deberá actualizar el carrito con un arreglo de productos con el formato especificado arriba.
     const {cid} = req.params
     const {products} = req.body
     try {
-        const cart = await cartModel.findOne({_id: cid})
-        cart.products=[...products]
-        await cart.save()
+        await updateCartWithArrayProducts(cid , products)
         res.send({message:'Se agrego correctamente los productos al carrito'})
     } catch (error) {
-        console.log(error);
+        res.status(400).send({ status: 'Rejected', payload: error.message });
     }
    
 })
 
-router.put('/:cid/products/:pid' , async(req,res) => {
-    //deberá poder actualizar SÓLO la cantidad de ejemplares del producto por cualquier cantidad pasada desde req.body
+router.put('/:cid/products/:pid' , validationNumber , async(req,res) => {
     const {cid , pid} = req.params
     const {stock} = req.body
     try {
-        const product = await productModel.findOne({_id : pid})
-        const cart = await cartModel.findOne({_id : cid})
-        product.stock = stock
-        await product.save()
-        await cart.save()
+        await updateStockProductInCartById(cid , pid , stock)
         res.send({message:'Se agrego correctamente el stock del producto'})
     } catch (error) {
-        console.log(error);
+        res.status(400).send({ status: 'Rejected', payload: error.message });
     }   
 })
 
 router.delete('/:cid' , async(req,res) => {
-    //Vacia los productos de ese carrito
     const {cid} = req.params
     try {
-        const cart = await cartModel.findOne({_id: cid})
-        cart.products=[]
-        await cart.save()
+        await deleteProductsInCartById(cid)
         res.send({message:'Se limpio correctamente el carrito'})
     } catch (error) {
-        console.log(error);
+        res.status(400).send({ status: 'Rejected', payload: error.message });
     }
 })
 
