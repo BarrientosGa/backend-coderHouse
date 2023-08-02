@@ -1,6 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import jwt from 'jsonwebtoken'
+import config from '../config/config.js'
 
 const router = Router()
 
@@ -12,7 +13,7 @@ router.post('/register' , passport.authenticate('register' , {session:false}) , 
 })
 
 router.post("/login", passport.authenticate('login' , {session:false}) ,  async (req, res) => {
-  let token = jwt.sign({email: req.body.email} , 'coderSecret' , {expiresIn:'24h'})
+  let token = jwt.sign({email: req.body.email} , config.secret_or_key , {expiresIn:'24h'})
   res.cookie('coderCookie' , token , {httpOnly:true}).send({ status: "success" });
 });
 

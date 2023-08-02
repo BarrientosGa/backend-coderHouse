@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
+import config from '../config/config.js'
 
 export default class MongoSingleton {
     static #instance
     
     constructor(){
-        mongoose.connect('mongodb+srv://barrientosga22:40916271Gaby@cluster0.csihdak.mongodb.net/ecommerce?retryWrites=true&w=majority') , {
+        mongoose.connect(config.db_connection) , {
             useNewUrlParser : true,
             useUnifiedTopology : true
         }

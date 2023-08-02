@@ -1,16 +1,15 @@
 import express from 'express'
 import routerProducts from './routes/products.router.js';
 import routerCarts from'./routes/carts.router.js';
-import routerWebSockets from './routes/webSockets.router.js'
 import __dirname from './utils.js'
 import handlebars from 'express-handlebars';
-import MongoStore from 'connect-mongo';
 import routerSession from './routes/session.router.js'
 import viewsRoutes from './routes/views.routes.js'
 import cookieParser from "cookie-parser";
 import { initializePassportJWT } from "./config/jwt.passport.js";
 import initializePassport from './config/passport.config.js';
 import MongoSingleton from './persistence/mongooseSingleton.js';
+import config from './config/config.js'
 
 
 const app = express()
@@ -33,8 +32,8 @@ app.use('/api/sessions' , routerSession)
 
 
 
-app.listen(8080 , () => {
-    console.log('Conectado al puerto 8080');
+app.listen(config.port , () => {
+    console.log(`Conectado al puerto ${config.port}`);
 })
 
 //connection db

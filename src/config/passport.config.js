@@ -3,6 +3,7 @@ import local from 'passport-local'
 import userModel from "../persistence/models/user.model.js";
 import {createHash , isValidPassword} from '../utils.js'
 import GitHubStrategy from 'passport-github2'
+import config from '../config/config.js'
 
 const LocalStrategy = local.Strategy
 const initializePassport = () => {
@@ -46,9 +47,9 @@ const initializePassport = () => {
         }
     })),
     passport.use('github' , new GitHubStrategy({
-        clientID: 'Iv1.c32e9428c1896b9f',
-        clientSecret: 'a87e267528089c7b1b0087201d9b0a3b5d3f4ad3',
-        callbackURL : 'http://localhost:8080/api/sessions/githubcallback'
+        clientID: config.client_id,
+        clientSecret: config.client_secret,
+        callbackURL : config.callback_url
     }, async (accessToken, refreshToken,profile , done) => {
         try {
             console.log(profile);
