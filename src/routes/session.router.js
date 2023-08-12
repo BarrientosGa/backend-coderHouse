@@ -2,6 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 import jwt from 'jsonwebtoken'
 import config from '../config/config.js'
+import { CurrentUserDTO } from "../controllers/dto/user.dto.js";
 
 const router = Router()
 
@@ -13,7 +14,9 @@ router.post('/register' , passport.authenticate('register' , {session:false}) , 
 })
 
 router.post("/login", passport.authenticate('login' , {session:false}) ,  async (req, res) => {
-  let token = jwt.sign({email: req.body.email} , config.secret_or_key , {expiresIn:'24h'})
+  const payload = req.user
+ /*  console.log(payload); */
+  let token = jwt.sign(payload , config.secret_or_key , {expiresIn:'24h'})
   res.cookie('coderCookie' , token , {httpOnly:true}).send({ status: "success" });
 });
 
@@ -29,6 +32,11 @@ router.get('/github' , passport.authenticate('github' , {scope:['user:email']}),
 router.get('/githubcallback' , passport.authenticate('github' , {failureRedirect:'/login'}), (req ,res) => {
   req.session.user = req.user
   res.redirect('/api/products/products')
+})
+
+// te devuelve la informacion del usuario
+router.get('/current' , passport.authenticate('jwt' , {session : false}) , async(req ,res) => {
+  res.send(new CurrentUserDTO(req.user))
 })
 
 

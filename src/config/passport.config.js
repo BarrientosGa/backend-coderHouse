@@ -9,7 +9,7 @@ const LocalStrategy = local.Strategy
 const initializePassport = () => {
     passport.use('register' , new LocalStrategy(
         {passReqToCallback:true , usernameField:'email'} , async (req,username,password,done) => {
-            const {first_name , last_name , email,age} = req.body
+            const {first_name , last_name , email,age , role} = req.body
             try {
                 let user = await userModel.findOne({email : username})
                 if(user){
@@ -24,7 +24,9 @@ const initializePassport = () => {
                     last_name,
                     email,
                     age,
-                    password: createHash(password)
+                    role,
+                    password: createHash(password),
+                    cartId : '64c9a4837398402a1ea771cc' //carrito harcodeado
                 }
                 const result = await userModel.create(newUser)
                 return done(null , result)
@@ -36,11 +38,30 @@ const initializePassport = () => {
     )),
     passport.use('login' , new LocalStrategy({usernameField:'email'} , async(username , password , done) => {
         try {
-            const user = await userModel.findOne({email:username})
+            if(username === 'admin@hotmail.com' && password === 'admin'){
+                let user ={
+                    name : 'Admin',
+                    email : 'admin@hotmail.com',
+                    age : 10 ,
+                    role : 'admin',
+                    id : 0,
+                    cartId : '64c9a4837398402a1ea771cc'
+                }
+                return done(null , user)
+            }
+            let user = await userModel.findOne({email:username})
             if(!user){
                 return done(null,false)
             }
             if(!isValidPassword(user , password)) return done (null , false)
+            user = {
+                name : `${user.first_name} ${user.last_name}`,
+                email : `${user.email}`,
+                age : user.age ,
+                role : `${user.role}`,
+                id : user._id,
+                cartId : user.cartId
+            }
             return done(null , user)
         } catch (error) {
             return done(error)

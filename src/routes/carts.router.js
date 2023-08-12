@@ -2,6 +2,9 @@ import { Router } from "express";
 import { addProductInCart, addProductInCartById, deleteProductInCartById, deleteProductsInCartById, getCartById, getCartsById, updateStockProductInCartById , updateCartWithArrayProducts } from "../services/carts.service.js";
 import { validationType } from "../controllers/products.controller.js";
 import { validationNumber } from "../controllers/carts.controller.js";
+import passport from 'passport'
+import { rolesMiddlwaresUser } from "./middlewares/roles.middlewares.js";
+import { verificarPertenenciaCarrito } from "./middlewares/carts.middlewares.js";
 
 const router = Router()
 
@@ -40,7 +43,7 @@ router.get('/:cid' , async(req,res)=>{
 
 })
 
-router.post('/:cid/product/:pid' , async(req,res)=>{
+router.post('/:cid/product/:pid' , passport.authenticate('jwt' , {session:false}) ,rolesMiddlwaresUser ,verificarPertenenciaCarrito , async(req,res)=>{
     const {cid , pid} = req.params
     try {
         await addProductInCartById(cid , pid)

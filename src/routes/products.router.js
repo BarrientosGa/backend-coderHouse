@@ -3,6 +3,7 @@ import passport from "passport";
 import { productModel } from "../persistence/models/product.model.js";
 import {getProducts , getProductById, createProduct , updateProductById , deleteProductById} from '../services/products.service.js'
 import { validationType } from "../controllers/products.controller.js";
+import { rolesMiddlwaresAdmin } from "./middlewares/roles.middlewares.js";
 
 const router = Router()
 
@@ -44,7 +45,7 @@ router.get('/:pid' , async(req,res)=>{
     }
 })
 
-router.post('/' , validationType , async(req , res) => {
+router.post('/' , passport.authenticate('jwt' , {session:false})  , rolesMiddlwaresAdmin/*  validationType */ , async(req , res) => {
     const {title , description, code, price , status=true , stock, category , thumbnails} = req.body
     const product = {
         title,
@@ -71,7 +72,7 @@ router.post('/' , validationType , async(req , res) => {
     }
 })
 
-router.put('/:pid' , async(req,res)=>{
+router.put('/:pid' , passport.authenticate('jwt' , {session:false}) ,rolesMiddlwaresAdmin ,async(req,res)=>{
     const {pid} = req.params
     const fieldUpdate = req.body
 
@@ -85,7 +86,7 @@ router.put('/:pid' , async(req,res)=>{
 
 })
 
-router.delete('/:pid' , async(req,res) =>{
+router.delete('/:pid' , passport.authenticate('jwt' , {session:false}) ,rolesMiddlwaresAdmin ,async(req,res) =>{
     const {pid} = req.params
     try {
        await deleteProductById(pid)
