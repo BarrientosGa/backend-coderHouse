@@ -10,6 +10,7 @@ import { initializePassportJWT } from "./config/jwt.passport.js";
 import initializePassport from './config/passport.config.js';
 import MongoSingleton from './persistence/mongooseSingleton.js';
 import config from './config/config.js'
+import { errorMiddleware } from './middlewares/errors/error.middleware.js';
 
 
 const app = express()
@@ -19,6 +20,7 @@ app.use(express.static(__dirname+'/public'))
 app.engine('handlebars',handlebars.engine());
 app.set('views',__dirname+'/views')
 app.use(cookieParser())
+app.use(errorMiddleware)
 initializePassportJWT()
 initializePassport()
 

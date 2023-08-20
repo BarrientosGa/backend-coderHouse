@@ -4,6 +4,8 @@ import { productModel } from "../persistence/models/product.model.js";
 import {getProducts , getProductById, createProduct , updateProductById , deleteProductById} from '../services/products.service.js'
 import { validationType } from "../controllers/products.controller.js";
 import { rolesMiddlwaresAdmin } from "./middlewares/roles.middlewares.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
 
 const router = Router()
 
@@ -38,8 +40,19 @@ router.get('/:pid' , async(req,res)=>{
     const {pid} = req.params
     
     try {
-        const product = await getProductById(pid)
-        res.send({product})
+        if(!isNaN(pid)){
+            CustomError.createError({
+                name : 'id is not a string',
+                cause : `the given id ${pid} is not a string`,
+                message: 'cannot get products',
+                code : EErrors.PARAM_ERROR
+            })
+        }
+        else{
+            const product = await getProductById(pid)
+            res.send({product})
+        }
+       
     } catch (error) {
         res.status(400).send({ status: 'Rejected', payload: error.message });
     }
