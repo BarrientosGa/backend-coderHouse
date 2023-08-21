@@ -4,6 +4,7 @@ import routerCarts from'./routes/carts.router.js';
 import __dirname from './utils.js'
 import handlebars from 'express-handlebars';
 import routerSession from './routes/session.router.js'
+import routerMockingProducts from './routes/mockingProducts.router.js'
 import viewsRoutes from './routes/views.routes.js'
 import cookieParser from "cookie-parser";
 import { initializePassportJWT } from "./config/jwt.passport.js";
@@ -29,6 +30,7 @@ app.use('/', viewsRoutes)
 app.use('/api/products/', routerProducts)
 app.use('/api/carts/' , routerCarts)
 app.use('/api/sessions' , routerSession)
+app.use('/mockingproducts' , routerMockingProducts)
 /* app.use('/realtimeproducts' , routerWebSockets) */
 
 
