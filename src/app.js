@@ -12,11 +12,13 @@ import initializePassport from './config/passport.config.js';
 import MongoSingleton from './persistence/mongooseSingleton.js';
 import config from './config/config.js'
 import { errorMiddleware } from './middlewares/errors/error.middleware.js';
+import { addLogger } from './utils/logger.js';
 
 
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+app.use(addLogger)
 app.use(express.static(__dirname+'/public'))
 app.engine('handlebars',handlebars.engine());
 app.set('views',__dirname+'/views')
