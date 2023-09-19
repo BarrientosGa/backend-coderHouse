@@ -1,0 +1,310 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtiene todos los productos
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Se obtuvieron los productos correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: Error interno del servidor
+    post:
+      summary: Agrega un nuevo producto
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/newProduct"
+
+  /api/products/:pid:
+    get:
+      summary: Obtiene un producto a partir de su pid
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: pid del producto a solicitar
+          schema:
+            $type: String
+      responses:
+      "200":
+        description: Producto encontrado
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/Product"
+
+    delete:
+      summary: eliminar el producto a partir de su pid
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: pid del producto a eliminar
+          schema:
+            $type: String
+      response:
+      "200":
+        description: Producto eliminado
+
+    put:
+      summary: Actualizar un producto a partir de su pid
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          requiered: true
+          description: pid del producto a actualizar
+          schema:
+            $type: String
+          response:
+          "200":
+            description: Producto actualizado
+            content:
+            application/json:
+              schema:
+                $ref: "#components/requestBodies/newProduct"
+
+  /api/carts/:
+    post:
+      summary: Agrega un carrito nuevo con productos
+      tags:
+        - Carrito
+      requestBody:
+        required: true
+
+  /api/carts/:cid : 
+    get :
+      summary: Obtiene el carrito a partir del cid
+      tags :
+        - Carrito
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: pid del producto a solicitar
+          schema:
+            $type: String
+      responses:
+      "200":
+        description: Se obtuvo el carrito correctamente
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/Cart"
+    put :
+      summary : Actualiza el carrito con un array de productos
+      tags :
+        - Carrito
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid del carrito a solicitar
+          schema:
+            $type: String
+      requestBody:
+        required: true
+    delete :
+      summary : Vacia los productos del un carrito a partir del cid
+      tags :
+        - Carrito
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid del carrito a solicitar
+          schema:
+            $type: String
+      requestBody:
+        required: true
+
+  /api/carts/:cid/product/:pid :
+    post:
+      summary : Agrega un producto al carrito con el cid seleccionado
+      tags:
+        - Carrito
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid del carito a solicitar
+          schema:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: pid del producto a solicitar
+          schema:
+            $type: String
+      requestBody:
+        required: true
+    delete:
+      summary : Elimina el producto del carrito con el cid seleccionado
+      tags :
+        - Carrito
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid del carrito a solicitar
+          schema:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: pid del carrito a solicitar
+          schema:
+            $type: String
+      requestBody:
+        required: true
+    put :
+      summary : Actualiza la cantidad de ejemplares del producto del carrito con el cid seleccionado
+      tags :
+        - Carrito
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid del carrito a solicitar
+          schema:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: pid del carrito a solicitar
+          schema:
+            $type: String
+      requestBody:
+        required: true
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado de mongo
+        title:
+          type: String
+          description: Titulo del producto
+        description:
+          type: String
+          description: Descripcion del producto
+        code:
+          type: String
+          description: Codigo unico del producto
+        price:
+          type: Number
+          description: Precio del producto
+        status:
+          type: Boolean
+          description: Estado del producto
+        stock:
+          type: Number
+          description: Stock del producto
+        category:
+          type: String
+          description: Categoria del producto
+      example:
+      _id: ObjectId(asasasadadadq122)
+      title: Producto 1
+      description: Descripcion del producto
+      code: 125abc
+      price: 50
+      status: true
+      stock: 10
+      category: Tecnología
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado de mongo
+        products:
+          type: array
+          items:
+            $ref: "#components/schemas/Product"
+          description: Array de productos
+
+  requestBodies:
+    newProduct:
+      type: object
+      properties:
+        title:
+          type: String
+          description: Titulo del producto
+        description:
+          type: String
+          description: Descripcion del producto
+        code:
+          type: String
+          description: Codigo unico del producto
+        price:
+          type: Number
+          description: Precio del producto
+        status:
+          type: Boolean
+          description: Estado del producto
+        stock:
+          type: Number
+          description: Stock del producto
+        category:
+          type: String
+          description: Categoria del producto
+      example:
+        title: Producto 1
+        description: Descripcion del producto
+        code: 125abc
+        price: 50
+        status: true
+        stock: 10
+        category: Tecnología
+    updateProduct:
+      type: object
+      properties:
+      title:
+        type: String
+        description: Titulo del producto
+      description:
+        type: String
+        description: Descripcion del producto
+      code:
+        type: String
+        description: Codigo unico del producto
+      price:
+        type: Number
+        description: Precio del producto
+      status:
+        type: Boolean
+        description: Estado del producto
+      stock:
+        type: Number
+        description: Stock del producto
+      category:
+        type: String
+        description: Categoria del producto
+  example:
+    title: Producto 1
+    description: Descripcion del producto
+    code: 125abc
+    price: 50
+    status: true
+    stock: 10
+    category: Tecnología
