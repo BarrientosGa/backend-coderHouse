@@ -47,14 +47,12 @@ export const updateProductById = async(id , fieldUpdate) => {
     
 }
 
-export const deleteProductById = async(id , user) => {
+export const deleteProductById = async(id , ) => {
     const product = await productModel.findOne({_id:id})
 
     if(product){
-        if((user.email === product.owner) || (user.role === 'admin')){
-            const productDeleted = await productModel.deleteOne({_id:id})
-            return productDeleted;
-        }
+        const productDeleted = await productModel.deleteOne({_id:id})
+        return productDeleted;
     }
     
 }

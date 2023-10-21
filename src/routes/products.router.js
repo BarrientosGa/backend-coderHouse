@@ -102,12 +102,11 @@ router.put('/:pid', passport.authenticate('jwt', { session: false }), rolesMiddl
 
 router.delete('/:pid', passport.authenticate('jwt', { session: false }), rolesMiddlwaresAdmin, async (req, res) => {
     const { pid } = req.params
-    const user = req.user
     const product = await productModel.findOne({ _id: pid })
 
     try {
         if (product) {
-            await deleteProductById(pid , user)
+            await deleteProductById(pid)
             return res.status(201).send({ message: 'Producto eliminado con exito' })
 
         }
