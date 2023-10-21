@@ -26,7 +26,7 @@ const initializePassport = () => {
                     age,
                     role,
                     password: createHash(password),
-                    cartId : '64c9a4837398402a1ea771cc' //carrito harcodeado
+                    cartId : '652ea81b73b0ae559e21ba31' //carrito harcodeado
                 }
                 const result = await userModel.create(newUser)
                 return done(null , result)
@@ -45,7 +45,7 @@ const initializePassport = () => {
                     age : 10 ,
                     role : 'admin',
                     id : 0,
-                    cartId : '64c9a4837398402a1ea771cc'
+                    cartId : '652ea81b73b0ae559e21ba31'
                 }
                 return done(null , user)
             }

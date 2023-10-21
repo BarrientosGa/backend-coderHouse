@@ -27,10 +27,10 @@ export const getProductById = async (id) => {
 }
 
 export const createProduct = async (product) => {
-    const findFieldUndefined = Object.values(product).findIndex(value => value === undefined || null)
+   /*  const findFieldUndefined = Object.values(product).findIndex(value => value === undefined || null) */
     const productRepeat = await productModel.findOne({code:product.code})
 
-    if(findFieldUndefined === -1 && !productRepeat){
+    if(!productRepeat){
         //product.thumbnails = thumbnails
       return await productModel.create(product);
     }
@@ -47,12 +47,14 @@ export const updateProductById = async(id , fieldUpdate) => {
     
 }
 
-export const deleteProductById = async(id) => {
+export const deleteProductById = async(id , user) => {
     const product = await productModel.findOne({_id:id})
 
     if(product){
-        const productDeleted = await productModel.deleteOne({_id:id})
-        return productDeleted;
+        if((user.email === product.owner) || (user.role === 'admin')){
+            const productDeleted = await productModel.deleteOne({_id:id})
+            return productDeleted;
+        }
     }
     
 }

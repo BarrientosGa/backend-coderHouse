@@ -1,5 +1,5 @@
 export const rolesMiddlwaresAdmin = (req ,res , next) => {
-    if(req.user.role === 'admin'){
+    if(req.user.role === 'admin' || req.user.role === 'premium'){
         next()
     }
     else {

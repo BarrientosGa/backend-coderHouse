@@ -2,7 +2,8 @@ import { cartModel } from "../persistence/models/cart.model.js"
 import { productModel } from "../persistence/models/product.model.js"
 
 export const addProductInCart = async(cart) => {
-    return await cartModel.create(cart)
+    const cartCreated = await cartModel.create(cart)
+    return cartCreated.save()
 }
 
 export const getCartsById = async(cid) =>{

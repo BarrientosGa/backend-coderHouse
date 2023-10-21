@@ -1,19 +1,14 @@
 import { Router } from "express";
 import { addProductInCart, addProductInCartById, deleteProductInCartById, deleteProductsInCartById, getCartById, getCartsById, updateStockProductInCartById, updateCartWithArrayProducts } from "../services/carts.service.js";
-import { validationType } from "../controllers/products.controller.js";
 import { validationNumber } from "../controllers/carts.controller.js";
 import passport from 'passport'
 import { rolesMiddlwaresUser } from "./middlewares/roles.middlewares.js";
 import { verificarPertenenciaCarrito } from "./middlewares/carts.middlewares.js";
-import { cartModel } from "../persistence/models/cart.model.js";
-import { productModel } from "../persistence/models/product.model.js";
-import ticketModel from "../persistence/models/ticket.model.js";
-import { v4 as uuidv4 } from 'uuid';
 
 const router = Router()
 
 //crea un nuevo carrito con productos
-router.post('/', validationType, async (req, res) => {
+router.post('/', async (req, res) => {
     const { products } = req.body
     const cart = {
         products
@@ -35,6 +30,7 @@ router.get('/carts/:cid', async (req, res) => {
     res.render('cart', cart)
 })
 
+//devuelve el carrito cid
 router.get('/:cid', async (req, res) => {
     const { cid } = req.params
 
@@ -47,6 +43,7 @@ router.get('/:cid', async (req, res) => {
 
 })
 
+//agrega al carrito cid el producto pid
 router.post('/:cid/product/:pid', passport.authenticate('jwt', { session: false }), rolesMiddlwaresUser, verificarPertenenciaCarrito, async (req, res) => {
     const { cid, pid } = req.params
     try {
@@ -58,6 +55,7 @@ router.post('/:cid/product/:pid', passport.authenticate('jwt', { session: false 
 
 })
 
+//Elimina del carrito cid el producto pid
 router.delete('/:cid/products/:pid', async (req, res) => {
     const { cid, pid } = req.params
     try {
@@ -68,6 +66,7 @@ router.delete('/:cid/products/:pid', async (req, res) => {
     }
 })
 
+//actualiza el carrito cid con un array de productos
 router.put('/:cid', async (req, res) => {
     const { cid } = req.params
     const { products } = req.body
@@ -80,6 +79,7 @@ router.put('/:cid', async (req, res) => {
 
 })
 
+//actualizada la cantidad de ejemplares del producto pid del carrito cid
 router.put('/:cid/products/:pid', validationNumber, async (req, res) => {
     const { cid, pid } = req.params
     const { stock } = req.body
@@ -91,6 +91,7 @@ router.put('/:cid/products/:pid', validationNumber, async (req, res) => {
     }
 })
 
+//elimina todos los productos del carrito cid
 router.delete('/:cid', async (req, res) => {
     const { cid } = req.params
     try {
@@ -99,51 +100,6 @@ router.delete('/:cid', async (req, res) => {
     } catch (error) {
         res.status(400).send({ status: 'Rejected', payload: error.message });
     }
-})
-
-router.get('/:cid/purchase', async (req, res) => {
-    const { cid } = req.params
-    const cart = await cartModel.findOne({ _id: cid })
-    let totalPurchase = 0
-   
-    const prueba = cart.products.map(async ({product}) => {
-        let totalPurchase = 0
-        const arrayProductsWithStock = []
-        const arrayProductsWithoutStock = []
-        const productTest = await productModel.findOne({ _id: product })
-        if (productTest.stock > 0) {
-            totalPurchase = totalPurchase + productTest.price;
-            arrayProductsWithStock.push(productTest._id);
-              return {
-                totalPurchase,
-                arrayProductsWithStock
-              } 
-        }
-        else {
-            totalPurchase = 0
-            arrayProductsWithoutStock.push(productTest._id)
-            return {
-                totalPurchase,
-                arrayProductsWithoutStock
-            }
-        }
-      
-    })
-
-    console.log('total purchase' , totalPurchase);
-
-
-    /*   const ticket = {
-        code : uuidv4(),
-        purchase_datetime : new Date(),
-        products : [...arrayProductsWithStock],
-        amount : totalPurchase,
-        purchaser : 'gaby.0097@hotmail.com'
-    }
-    
-    await ticketModel.create(ticket) */
-
-    res.end();
 })
 
 export default router

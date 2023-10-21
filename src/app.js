@@ -6,6 +6,7 @@ import handlebars from 'express-handlebars';
 import routerSession from './routes/session.router.js'
 import routerMockingProducts from './routes/mockingProducts.router.js'
 import viewsRoutes from './routes/views.routes.js'
+import routerUsers from './routes/users.router.js'
 import cookieParser from "cookie-parser";
 import { initializePassportJWT } from "./config/jwt.passport.js";
 import initializePassport from './config/passport.config.js';
@@ -45,8 +46,8 @@ app.use('/', viewsRoutes)
 app.use('/api/products/', routerProducts)
 app.use('/api/carts/' , routerCarts)
 app.use('/api/sessions' , routerSession)
+app.use('/api/users' , routerUsers)
 app.use('/mockingproducts' , routerMockingProducts)
-/* app.use('/realtimeproducts' , routerWebSockets) */
 
 
 

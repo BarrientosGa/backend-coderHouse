@@ -1,0 +1,28 @@
+Usuarios
+
+Role admin
+superuser@hotmail.com
+123456
+
+Role user
+user1@hotmail.com
+123456
+
+-------------.-----------------.--------------------------
+Clase 30
+
+- Crear modelo de ticket no esta hecho por como se habia empezado 
+la estructura de los productos y del carrito.
+
+---------------.--------------.---------------------
+
+El usuario tiene asignado su cartId que es el unico que esta en la base de datos
+y esta harcodeado
+
+Cosas que no tiene el proyecto
+
+- testing
+
+- websocket
+ 
+- desafio complementario de la clase 37
