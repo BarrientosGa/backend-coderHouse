@@ -1,4 +1,4 @@
-import EErrors from "../../services/errors/enums.js";
+import EErrors from "../../../services/errors/enums.js";
 
 export const errorMiddleware =  (error ,req ,res ,next) => {
     switch (error.code) {

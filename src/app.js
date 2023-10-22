@@ -12,7 +12,7 @@ import { initializePassportJWT } from "./config/jwt.passport.js";
 import initializePassport from './config/passport.config.js';
 import MongoSingleton from './persistence/mongooseSingleton.js';
 import config from './config/config.js'
-import { errorMiddleware } from './middlewares/errors/error.middleware.js';
+import { errorMiddleware } from './routes/middlewares/errors/error.middleware.js';
 import { addLogger } from './utils/logger.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express'
