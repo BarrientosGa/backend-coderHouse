@@ -29,3 +29,5 @@ Cosas que no tiene el proyecto
 
 - En general al proyecto le falta los ultimos desafios complementarios despues
 los desafios obligatorios estan todos menos el de la clase 30
+
+- La parte de handlebars esta un poco incompleta lo mejor seria probar con postman
